@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<link
+rel="icon"
+type="image/png"
+sizes="512x512"
+href="logo.png"
+>
+
+<link
+rel="apple-touch-icon"
+sizes="512x512"
+href="logo.png"
+>
+
+<meta
+property="og:image"
+content="logo.png"
+>
+
+<meta
+name="theme-color"
+content="#ff00ff"
+>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PHONK HUB LOGIN</title>
+
+<meta name="description" content="Get latest phonk music for free on PHONK HUB. Stream and download dark phonk tracks easily.">
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<!-- GHOST ANIMATIONS -->
+
+<div class="ghosts">
+
+<div class="ghost g1"></div>
+
+<div class="ghost g2"></div>
+
+<div class="ghost g3"></div>
+
+<div class="ghost g4"></div>
+
+<div class="ghost g5"></div>
+
+</div>
+
+<!-- PARTICLES -->
+
+<div class="particles">
+
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+
+</div>
+
+<!-- LOGIN BOX -->
+
+<div class="login-box">
+<!-- LOGO -->
+
+<div class="logo-circle">
+
+<img
+src="logo.jpg"
+class="logo"
+>
+
+</div>
+
+<!-- TITLE -->
+
+<h1 class="main-title">
+
+PHONK HUB
+
+</h1>
+
+<p class="sub-title">
+
+ENTER THE DARK PHONK WORLD
+
+</p>
+
+<!-- INPUTS -->
+
+<input
+type="text"
+id="username"
+class="input"
+placeholder="Username"
+/>
+
+<input
+type="password"
+id="password"
+class="input"
+placeholder="Password"
+/>
+
+<!-- BUTTONS -->
+
+<button
+class="btn"
+onclick="register()"
+>
+
+REGISTER
+
+</button>
+
+<button
+class="btn"
+onclick="login()"
+>
+
+LOGIN
+
+</button>
+
+<!-- MESSAGE -->
+
+<div id="msg"></div>
+
+</div>
+
+<!-- FIREBASE -->
+
+<script type="module">
+
+import {
+initializeApp
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+import {
+
+getFirestore,
+collection,
+addDoc,
+getDocs
+
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+/* FIREBASE */
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyBecNPVaAA-cDg7Gmozx31BCIMWxrhPlh0",
+
+authDomain: "phonkhub-e2f7a.firebaseapp.com",
+
+projectId: "phonkhub-e2f7a",
+
+storageBucket: "phonkhub-e2f7a.firebasestorage.app",
+
+messagingSenderId: "914767759699",
+
+appId: "1:914767759699:web:cd6aeb130938695f4c39a6"
+
+};
+
+/* INIT */
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getFirestore(app);
+
+/* MESSAGE */
+
+function show(text,color){
+
+document.getElementById("msg")
+.innerHTML =
+
+`<span style="color:${color}">
+${text}
+</span>`;
+
+}
+
+/* REGISTER */
+
+window.register =
+async function(){
+
+let username =
+
+document.getElementById("username")
+.value.trim();
+
+let password =
+
+document.getElementById("password")
+.value.trim();
+
+/* RULE */
+
+let regex =
+/^[A-Za-z_]{1,8}$/;
+
+if(!regex.test(username)){
+
+show(
+"Only letters & underscore",
+"red"
+);
+
+return;
+
+}
+
+/* PASSWORD */
+
+if(password.length < 4){
+
+show(
+"Password too short",
+"red"
+);
+
+return;
+
+}
+
+/* CHECK USER */
+
+let snap =
+
+await getDocs(
+collection(db,"users")
+);
+
+let exists = false;
+
+snap.forEach(doc=>{
+
+if(
+doc.data().username === username
+){
+
+exists = true;
+
+}
+
+});
+
+if(exists){
+
+show(
+"Username exists",
+"red"
+);
+
+return;
+
+}
+
+/* SAVE */
+
+await addDoc(
+
+collection(db,"users"),
+
+{
+
+username,
+password
+
+}
+
+);
+
+/* LOGIN */
+
+localStorage.setItem(
+"phonkUser",
+username
+);
+localStorage.setItem(
+"username",
+username
+);
+/* REDIRECT */
+
+window.location.href =
+"home.html";
+
+}
+
+/* LOGIN */
+
+window.login =
+async function(){
+
+let username =
+
+document.getElementById("username")
+.value.trim();
+
+let password =
+
+document.getElementById("password")
+.value.trim();
+
+let snap =
+
+await getDocs(
+collection(db,"users")
+);
+
+let found = false;
+
+snap.forEach(doc=>{
+
+let data =
+doc.data();
+
+if(
+
+data.username === username &&
+data.password === password
+
+){
+
+found = true;
+
+}
+
+});
+
+if(found){
+
+localStorage.setItem(
+"phonkUser",
+username
+);
+localStorage.setItem(
+"username",
+username
+);
+window.location.href =
+"home.html";
+
+}else{
+
+show(
+"Wrong Login",
+"red"
+);
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>

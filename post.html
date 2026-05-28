@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PHONK CHAT</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+
+background:
+linear-gradient(
+180deg,
+#05010d,
+#120018,
+#05010d
+);
+
+color:white;
+
+overflow-x:hidden;
+
+padding-bottom:170px;
+
+}
+
+/* HEADER */
+
+.header{
+
+position:sticky;
+
+top:0;
+
+z-index:9999;
+
+padding:22px;
+
+font-size:38px;
+
+font-weight:bold;
+
+color:#ff00ff;
+
+background:
+rgba(0,0,0,0.7);
+
+backdrop-filter:blur(12px);
+
+border-bottom:
+1px solid #ff00ff33;
+
+text-shadow:
+0 0 20px #ff00ff;
+
+}
+
+/* CHAT AREA */
+
+.chat-container{
+
+width:92%;
+
+max-width:900px;
+
+margin:auto;
+
+padding-top:20px;
+
+display:flex;
+
+flex-direction:column;
+
+gap:18px;
+
+}
+
+/* MESSAGE ROW */
+
+.message-row{
+
+display:flex;
+
+width:100%;
+
+}
+
+/* LEFT */
+
+.left{
+
+justify-content:flex-start;
+
+}
+
+/* RIGHT */
+
+.right{
+
+justify-content:flex-end;
+
+}
+
+/* MESSAGE */
+
+.message{
+
+max-width:75%;
+
+padding:15px;
+
+border-radius:22px;
+
+position:relative;
+
+word-wrap:break-word;
+
+line-height:24px;
+
+animation:fadeUp 0.4s ease;
+
+}
+
+/* OTHER USERS */
+
+.left .message{
+
+background:#1a0a25;
+
+border:
+1px solid #ffffff10;
+
+box-shadow:
+0 0 12px rgba(255,255,255,0.05);
+
+}
+
+/* ADMIN */
+
+.right .message{
+
+background:
+linear-gradient(
+45deg,
+#ff00ff,
+#8a00ff
+);
+
+box-shadow:
+0 0 20px rgba(255,0,255,0.35);
+
+}
+
+/* USERNAME */
+
+.username{
+
+font-size:13px;
+
+margin-bottom:8px;
+
+color:#ddd;
+
+font-weight:bold;
+
+}
+
+/* CHECKBOX */
+
+.selectBox{
+
+position:absolute;
+
+top:10px;
+
+right:10px;
+
+width:20px;
+
+height:20px;
+
+accent-color:#ff00ff;
+
+display:none;
+
+}
+
+/* INPUT */
+
+.send-box{
+
+position:fixed;
+
+bottom:90px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+width:92%;
+
+max-width:900px;
+
+display:flex;
+
+gap:10px;
+
+z-index:9999;
+
+}
+
+.send-box input{
+
+flex:1;
+
+padding:18px;
+
+border:none;
+
+border-radius:18px;
+
+background:#1a0a25;
+
+color:white;
+
+outline:none;
+
+font-size:16px;
+
+}
+
+.send-box button{
+
+padding:18px 25px;
+
+border:none;
+
+border-radius:18px;
+
+background:
+linear-gradient(
+45deg,
+#ff00ff,
+#8a00ff
+);
+
+color:white;
+
+font-weight:bold;
+
+font-size:16px;
+
+cursor:pointer;
+
+}
+
+/* DELETE BUTTON */
+
+#deleteBtn{
+
+position:fixed;
+
+top:90px;
+
+right:15px;
+
+z-index:99999;
+
+padding:12px 18px;
+
+border:none;
+
+border-radius:14px;
+
+background:red;
+
+color:white;
+
+font-weight:bold;
+
+display:none;
+
+cursor:pointer;
+
+}
+
+/* NAVBAR */
+
+.bottom-nav{
+
+position:fixed;
+
+bottom:0;
+
+left:0;
+
+width:100%;
+
+height:80px;
+
+background:
+rgba(10,0,20,0.98);
+
+border-top:
+1px solid #ff00ff44;
+
+display:flex;
+
+justify-content:space-around;
+
+align-items:center;
+
+z-index:999999;
+
+backdrop-filter:blur(14px);
+
+}
+
+.bottom-nav a{
+
+text-decoration:none;
+
+color:#bbb;
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+gap:4px;
+
+font-size:12px;
+
+font-weight:bold;
+
+}
+
+.bottom-nav a.active{
+
+color:#ff00ff;
+
+text-shadow:
+0 0 12px #ff00ff;
+
+}
+
+.nav-icon{
+
+font-size:26px;
+
+}
+
+/* ANIMATION */
+
+@keyframes fadeUp{
+
+from{
+
+opacity:0;
+transform:translateY(20px);
+
+}
+
+to{
+
+opacity:1;
+transform:translateY(0);
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+
+💬 PHONK CHAT
+
+</div>
+
+<!-- DELETE -->
+
+<button id="deleteBtn">
+
+DELETE SELECTED
+
+</button>
+
+<!-- CHAT -->
+
+<div
+class="chat-container"
+id="messages"
+>
+
+</div>
+
+<!-- SEND -->
+
+<div class="send-box">
+
+<input
+type="text"
+id="messageInput"
+placeholder="Type message..."
+>
+
+<button onclick="sendMessage()">
+
+SEND
+
+</button>
+
+</div>
+
+<!-- NAV -->
+
+<div class="bottom-nav">
+
+<a href="home.html">
+
+<div class="nav-icon">
+🏠
+</div>
+
+HOME
+
+</a>
+
+<a href="host.html">
+
+<div class="nav-icon">
+👑
+</div>
+
+HOST
+
+</a>
+
+<a
+href="post.html"
+class="active"
+>
+
+<div class="nav-icon">
+💬
+</div>
+
+POSTS
+
+</a>
+
+<a href="profile.html">
+
+<div class="nav-icon">
+👤
+</div>
+
+PROFILE
+
+</a>
+
+</div>
+
+<!-- FIREBASE -->
+
+<script type="module">
+
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+
+getFirestore,
+collection,
+addDoc,
+getDocs,
+deleteDoc,
+doc,
+query,
+orderBy
+
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* FIREBASE */
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyBecNPVaAA-cDg7Gmozx31BCIMWxrhPlh0",
+
+authDomain: "phonkhub-e2f7a.firebaseapp.com",
+
+projectId: "phonkhub-e2f7a",
+
+storageBucket: "phonkhub-e2f7a.firebasestorage.app",
+
+messagingSenderId: "914767759699",
+
+appId: "1:914767759699:web:cd6aeb130938695f4c39a6"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getFirestore(app);
+
+/* CURRENT USER */
+
+let currentUser =
+
+localStorage.getItem("phonkUser") ||
+
+localStorage.getItem("username") ||
+
+"Unknown";
+
+/* ADMIN */
+
+const isAdmin =
+currentUser === "who_ap";
+
+/* SEND */
+
+window.sendMessage =
+async function(){
+
+let input =
+document
+.getElementById("messageInput");
+
+let text =
+input.value.trim();
+
+if(text === "") return;
+
+/* FIX USERNAME */
+
+let finalUsername =
+currentUser;
+
+if(
+finalUsername === "Unknown" ||
+!finalUsername
+){
+
+finalUsername =
+localStorage.getItem("phonkUser");
+
+}
+
+/* SAVE */
+
+await addDoc(
+collection(db,"comments"),
+{
+
+username:finalUsername,
+
+text:text,
+
+time:Date.now()
+
+}
+);
+
+input.value = "";
+
+loadMessages();
+
+};
+
+/* LOAD */
+
+async function loadMessages(){
+
+const container =
+document
+.getElementById("messages");
+
+container.innerHTML = "";
+
+const q =
+query(
+collection(db,"comments"),
+orderBy("time","asc")
+);
+
+const snapshot =
+await getDocs(q);
+
+snapshot.forEach((d)=>{
+
+const data = d.data();
+
+/* ADMIN RIGHT */
+
+const side =
+data.username === "who_ap"
+? "right"
+: "left";
+
+container.innerHTML += `
+
+<div class="message-row ${side}">
+
+<div
+class="message"
+data-id="${d.id}"
+>
+
+<input
+type="checkbox"
+class="selectBox"
+value="${d.id}"
+>
+
+<div class="username">
+
+@${data.username}
+
+</div>
+
+<div>
+
+${data.text}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+/* ADMIN FEATURES */
+
+if(isAdmin){
+
+enableLongPress();
+
+}
+
+}
+
+/* LONG PRESS */
+
+function enableLongPress(){
+
+const messages =
+document.querySelectorAll(".message");
+
+messages.forEach(msg=>{
+
+let timer;
+
+/* MOBILE LONG PRESS */
+
+msg.addEventListener(
+"touchstart",
+()=>{
+
+timer =
+setTimeout(()=>{
+
+showSelect(msg);
+
+},700);
+
+});
+
+msg.addEventListener(
+"touchend",
+()=>{
+
+clearTimeout(timer);
+
+});
+
+/* LAPTOP RIGHT CLICK */
+
+msg.addEventListener(
+"contextmenu",
+function(e){
+
+e.preventDefault();
+
+showSelect(msg);
+
+}
+);
+
+});
+
+}
+
+/* SHOW SELECT */
+
+function showSelect(msg){
+
+msg.querySelector(".selectBox")
+.style.display = "block";
+
+document
+.getElementById("deleteBtn")
+.style.display = "block";
+
+}
+
+/* DELETE */
+
+if(isAdmin){
+
+document
+.getElementById("deleteBtn")
+.addEventListener(
+"click",
+async ()=>{
+
+const selected =
+document.querySelectorAll(
+".selectBox:checked"
+);
+
+for(let s of selected){
+
+await deleteDoc(
+doc(db,"comments",s.value)
+);
+
+}
+
+loadMessages();
+
+}
+);
+
+}
+
+/* ENTER */
+
+document
+.getElementById("messageInput")
+.addEventListener(
+"keypress",
+function(e){
+
+if(e.key === "Enter"){
+
+sendMessage();
+
+}
+
+}
+);
+
+/* START */
+
+loadMessages();
+
+</script>
+
+</body>
+
+</html>
