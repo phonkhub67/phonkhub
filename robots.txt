@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://phonkhub67.github.io/phonkhub/sitemap.xml
