@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HOST PANEL</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#05010d;
+color:white;
+padding-bottom:100px;
+}
+
+/* HEADER */
+
+.header{
+text-align:center;
+padding:20px;
+}
+
+.header h1{
+color:#ff00ff;
+text-shadow:0 0 20px #ff00ff;
+}
+
+/* INPUT CODE */
+
+.input-box{
+width:90%;
+max-width:600px;
+margin:20px auto;
+display:flex;
+gap:10px;
+}
+
+.input-box input{
+flex:1;
+padding:14px;
+border:none;
+border-radius:12px;
+background:#1a0a25;
+color:white;
+outline:none;
+}
+
+.input-box button{
+padding:14px 18px;
+border:none;
+border-radius:12px;
+background:linear-gradient(45deg,#ff00ff,#8a00ff);
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* PANELS */
+
+.panel{
+width:90%;
+max-width:700px;
+margin:20px auto;
+padding:20px;
+border-radius:20px;
+background:#120018;
+border:1px solid #ff00ff33;
+display:none;
+}
+
+/* TITLES */
+
+.panel h2{
+text-align:center;
+color:#ff00ff;
+margin-bottom:15px;
+}
+
+/* INPUTS */
+
+.panel input{
+
+width:100%;
+padding:12px;
+margin:8px 0;
+
+border:none;
+border-radius:10px;
+
+background:#1a0a25;
+color:white;
+
+outline:none;
+
+}
+
+/* BUTTON */
+
+.btn{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+background:linear-gradient(45deg,#ff00ff,#8a00ff);
+color:white;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+}
+
+/* USER */
+
+.user{
+display:flex;
+align-items:center;
+gap:10px;
+padding:12px;
+margin:8px 0;
+background:#1a0a25;
+border-radius:10px;
+}
+
+.user input{
+width:18px;
+height:18px;
+accent-color:#ff00ff;
+}
+
+/* NAV */
+
+.bottom-nav{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+height:85px;
+
+display:flex;
+justify-content:space-around;
+align-items:center;
+
+background:#120018;
+border-top:2px solid #ff00ff55;
+
+z-index:9999;
+
+box-shadow:0 -10px 25px rgba(0,0,0,0.6);
+}
+
+.bottom-nav a{
+text-decoration:none;
+color:#aaa;
+display:flex;
+flex-direction:column;
+align-items:center;
+font-size:16px;
+gap:3px;
+}
+
+.bottom-nav a span{
+font-size:11px;
+}
+
+.bottom-nav a.active{
+color:#ff00ff;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+<h1>👑 HOST PANEL</h1>
+<p>Type <b>ADMIN CODE</b> to unlock admin system</p>
+</div>
+
+<!-- CODE INPUT -->
+
+<div class="input-box">
+
+<input type="text" id="codeInput" placeholder="Enter code">
+
+<button onclick="checkCode()">UNLOCK</button>
+
+</div>
+
+<!-- ADD PHONK PANEL -->
+
+<div class="panel" id="addPanel">
+
+<h2>➕ ADD PHONK</h2>
+
+<input type="text" id="songTitle" placeholder="Phonk Title">
+
+<label>Upload Cover Image</label>
+<input type="file" id="songImage" accept="image/*">
+
+<label>Upload Phonk Audio</label>
+<input type="file" id="songAudio" accept="audio/*">
+
+<button class="btn" onclick="uploadPhonk()">
+UPLOAD PHONK
+</button>
+
+</div>
+
+<!-- USER MANAGEMENT PANEL -->
+
+<div class="panel" id="userPanel">
+
+<h2>👤 USER MANAGEMENT</h2>
+
+<div id="usersList"></div>
+
+<button class="btn" onclick="deleteUsers()">
+DELETE SELECTED USERS
+</button>
+
+</div>
+
+<!-- NAV -->
+
+<div class="bottom-nav">
+
+<a href="home.html">🏠<span>Home</span></a>
+<a href="host.html" class="active">👑<span>Host</span></a>
+<a href="post.html">💬<span>Posts</span></a>
+<a href="profile.html">👤<span>Profile</span></a>
+
+</div>
+
+<!-- FIREBASE -->
+
+<script type="module">
+
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs,
+deleteDoc,
+doc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+getStorage,
+ref,
+uploadBytes,
+getDownloadURL
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+/* FIREBASE */
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyBecNPVaAA-cDg7Gmozx31BCIMWxrhPlh0",
+
+authDomain: "phonkhub-e2f7a.firebaseapp.com",
+
+projectId: "phonkhub-e2f7a",
+
+storageBucket: "phonkhub-e2f7a.firebasestorage.app",
+
+messagingSenderId: "914767759699",
+
+appId: "1:914767759699:web:cd6aeb130938695f4c39a6"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+const storage = getStorage(app);
+
+/* CODE CHECK */
+
+window.checkCode = function(){
+
+let code =
+document.getElementById("codeInput").value;
+
+if(code === "TQ"){
+
+document.getElementById("addPanel").style.display = "block";
+
+document.getElementById("userPanel").style.display = "block";
+
+loadUsers();
+
+}else{
+
+alert("Wrong Code");
+
+}
+
+document.getElementById("codeInput").value = "";
+
+}
+
+/* LOAD USERS */
+
+async function loadUsers(){
+
+let container =
+document.getElementById("usersList");
+
+container.innerHTML = "";
+
+const snapshot =
+await getDocs(
+collection(db,"users")
+);
+
+snapshot.forEach((d)=>{
+
+const u = d.data();
+
+container.innerHTML += `
+
+<div class="user">
+
+<input
+type="checkbox"
+value="${d.id}"
+>
+
+<span>${u.username}</span>
+
+</div>
+
+`;
+
+});
+
+}
+
+/* DELETE USERS */
+
+window.deleteUsers =
+async function(){
+
+let selected =
+document.querySelectorAll(
+"input[type=checkbox]:checked"
+);
+
+if(selected.length === 0){
+
+alert("Select users first");
+return;
+
+}
+
+for(let s of selected){
+
+await deleteDoc(
+doc(db,"users",s.value)
+);
+
+}
+
+alert("Users Deleted");
+
+loadUsers();
+
+}
+
+/* UPLOAD PHONK */
+
+window.uploadPhonk =
+async function(){
+
+let title =
+document.getElementById("songTitle").value;
+
+let imageFile =
+document.getElementById("songImage").files[0];
+
+let audioFile =
+document.getElementById("songAudio").files[0];
+
+if(
+!title ||
+!imageFile ||
+!audioFile
+){
+
+alert("Fill all fields");
+return;
+
+}
+
+try{
+
+/* IMAGE UPLOAD */
+
+const imageRef = ref(
+storage,
+"images/" + Date.now() + "_" + imageFile.name
+);
+
+await uploadBytes(imageRef,imageFile);
+
+const imageURL =
+await getDownloadURL(imageRef);
+
+/* AUDIO UPLOAD */
+
+const audioRef = ref(
+storage,
+"songs/" + Date.now() + "_" + audioFile.name
+);
+
+await uploadBytes(audioRef,audioFile);
+
+const audioURL =
+await getDownloadURL(audioRef);
+
+/* SAVE TO FIRESTORE */
+
+await addDoc(
+collection(db,"songs"),
+{
+
+title:title,
+image:imageURL,
+audio:audioURL
+
+}
+);
+
+alert("Phonk Uploaded Successfully");
+
+/* CLEAR */
+
+document.getElementById("songTitle").value = "";
+
+document.getElementById("songImage").value = "";
+
+document.getElementById("songAudio").value = "";
+
+}catch(err){
+
+console.log(err);
+
+alert("Upload Failed");
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
