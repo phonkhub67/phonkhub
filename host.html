@@ -205,7 +205,7 @@ color:#ff00ff;
 <h2>➕ ADD PHONK</h2>
 
 <input type="text" id="songTitle" placeholder="Phonk Title">
-
+<input type="text" id="songArtist" placeholder="Phonk Artist">
 <label>Upload Cover Image</label>
 <input type="file" id="songImage" accept="image/*">
 
@@ -357,6 +357,118 @@ value="${d.id}"
 }
 
 /* DELETE USERS */
+<script type="module">
+
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs,
+deleteDoc,
+doc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+getStorage,
+ref,
+uploadBytes,
+getDownloadURL
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+/* FIREBASE */
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyBecNPVaAA-cDg7Gmozx31BCIMWxrhPlh0",
+
+authDomain: "phonkhub-e2f7a.firebaseapp.com",
+
+projectId: "phonkhub-e2f7a",
+
+storageBucket: "phonkhub-e2f7a.firebasestorage.app",
+
+messagingSenderId: "914767759699",
+
+appId: "1:914767759699:web:cd6aeb130938695f4c39a6"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+const storage = getStorage(app);
+
+/* CODE CHECK */
+
+window.checkCode = function(){
+
+let code =
+document.getElementById("codeInput").value;
+
+if(code === "TQ"){
+
+document.getElementById("addPanel").style.display = "block";
+
+document.getElementById("userPanel").style.display = "block";
+
+loadUsers();
+
+}else{
+
+alert("Wrong Code");
+
+}
+
+document.getElementById("codeInput").value = "";
+
+}
+
+/* LOAD USERS */
+
+async function loadUsers(){
+
+let container =
+document.getElementById("usersList");
+
+container.innerHTML = "";
+
+const snapshot =
+await getDocs(
+collection(db,"users")
+);
+
+snapshot.forEach((d)=>{
+
+const u = d.data();
+
+container.innerHTML += `
+
+<div class="user">
+
+<input
+type="checkbox"
+value="${d.id}"
+>
+
+<span>${u.username}</span>
+
+</div>
+
+`;
+
+});
+
+}
+
+/* DELETE USERS */
 
 window.deleteUsers =
 async function(){
@@ -395,6 +507,9 @@ async function(){
 let title =
 document.getElementById("songTitle").value;
 
+let artist =
+document.getElementById("songArtist").value;
+
 let imageFile =
 document.getElementById("songImage").files[0];
 
@@ -403,6 +518,7 @@ document.getElementById("songAudio").files[0];
 
 if(
 !title ||
+!artist ||
 !imageFile ||
 !audioFile
 ){
@@ -445,6 +561,7 @@ collection(db,"songs"),
 {
 
 title:title,
+artist:artist,
 image:imageURL,
 audio:audioURL
 
@@ -456,6 +573,8 @@ alert("Phonk Uploaded Successfully");
 /* CLEAR */
 
 document.getElementById("songTitle").value = "";
+
+document.getElementById("songArtist").value = "";
 
 document.getElementById("songImage").value = "";
 
@@ -470,7 +589,6 @@ alert("Upload Failed");
 }
 
 }
-
 </script>
 
 </body>
