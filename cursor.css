@@ -1,0 +1,33 @@
+body{
+cursor:none;
+}
+
+.cursor-dot{
+position:fixed;
+width:8px;
+height:8px;
+border-radius:50%;
+background:#ff00ff;
+pointer-events:none;
+z-index:99999;
+transform:translate(-50%,-50%);
+box-shadow:0 0 15px #ff00ff;
+}
+
+.cursor-ring{
+position:fixed;
+width:35px;
+height:35px;
+border:2px solid #ff00ff;
+border-radius:50%;
+pointer-events:none;
+z-index:99998;
+transform:translate(-50%,-50%);
+box-shadow:0 0 20px #ff00ff;
+}
+
+.cursor-ring.hover{
+width:55px;
+height:55px;
+transition:.2s;
+}
