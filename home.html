@@ -474,10 +474,31 @@ id="songsContainer">
       ▶
     </button>
 
-    <h3 id="nowTitle">
-      No Song Playing
-    </h3>
+    
+<div style="flex:1;display:flex;justify-content:space-between;align-items:center;">
 
+<h3 id="nowTitle">
+  No Song Playing
+</h3>
+
+<button
+id="loopBtn"
+onclick="toggleLoop()"
+style="
+width:45px;
+height:45px;
+border:none;
+border-radius:10px;
+background:#1a1a1a;
+color:white;
+font-size:20px;
+cursor:pointer;
+"
+>
+🔁
+</button>
+
+</div>
   </div>
 
   <input
@@ -833,7 +854,7 @@ song.play();
 
 currentSong = song;
 currentButton = btn;
-
+song.loop = loopMode;
 btn.querySelector(".play-text")
 .innerText = "PAUSE";
 
@@ -1014,6 +1035,44 @@ card.style.display = "none";
 }
 
 /* START */
+  function toggleLoop(){
+
+loopMode = !loopMode;
+
+let btn =
+document.getElementById("loopBtn");
+
+if(loopMode){
+
+btn.style.background =
+"linear-gradient(45deg,#ff00ff,#8a00ff)";
+
+btn.style.boxShadow =
+"0 0 20px #ff00ff";
+
+if(currentSong){
+
+currentSong.loop = true;
+
+}
+
+}else{
+
+btn.style.background =
+"#1a1a1a";
+
+btn.style.boxShadow =
+"none";
+
+if(currentSong){
+
+currentSong.loop = false;
+
+}
+
+}
+
+  }
 
 createSongs();
 
