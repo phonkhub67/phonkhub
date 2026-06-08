@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<link rel="stylesheet" href="cursor.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PROFILE</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#05010d;
+color:white;
+padding-bottom:90px;
+}
+
+/* HEADER */
+
+.header{
+text-align:center;
+padding:20px;
+}
+
+.header h1{
+color:#ff00ff;
+text-shadow:0 0 20px #ff00ff;
+}
+
+/* CARD */
+
+.card{
+width:90%;
+max-width:600px;
+
+margin:20px auto;
+
+padding:20px;
+
+background:#120018;
+
+border-radius:20px;
+
+border:1px solid #ff00ff33;
+
+}
+
+/* TEXT */
+
+.label{
+color:#aaa;
+font-size:14px;
+}
+
+.value{
+font-size:20px;
+margin-bottom:15px;
+color:white;
+}
+
+/* MESSAGES */
+
+.msgBox{
+
+margin-top:15px;
+
+}
+
+.msg{
+display:flex;
+align-items:center;
+gap:12px;
+}
+.beast-img{
+width:70px;height:70px;object-fit:cover;border-radius:12px;
+}
+.beast-play,.beast-unstar{
+padding:8px 12px;border:none;border-radius:10px;cursor:pointer;
+}
+.beast-play{background:#ff00ff;color:white;}
+.beast-unstar{background:#222;color:white;}
+
+
+background:#1a0a25;
+
+padding:10px;
+
+border-radius:10px;
+
+margin:8px 0;
+
+}
+
+/* LOGOUT */
+
+.btn{
+
+width:100%;
+padding:14px;
+
+margin-top:20px;
+
+border:none;
+border-radius:12px;
+
+background:red;
+
+color:white;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+/* NAV */
+
+.bottom-nav{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+height:85px;
+
+display:flex;
+justify-content:space-around;
+align-items:center;
+
+background:#120018;
+border-top:2px solid #ff00ff55;
+
+z-index:9999;
+
+box-shadow:0 -10px 25px rgba(0,0,0,0.6);
+}
+
+.bottom-nav a{
+
+text-decoration:none;
+color:#aaa;
+
+display:flex;
+flex-direction:column;
+align-items:center;
+
+font-size:16px;
+
+gap:3px;
+
+}
+
+.bottom-nav a span{
+font-size:11px;
+}
+
+.bottom-nav a.active{
+color:#ff00ff;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+
+<h1>👤 PROFILE</h1>
+
+</div>
+
+<!-- PROFILE CARD -->
+
+<div class="card">
+
+<div class="label">Username</div>
+<div class="value" id="username">---</div>
+
+<div class="label">Your Beast</div>
+<div class="msgBox" id="beastBox"></div>
+
+<button class="btn" onclick="logout()">
+LOGOUT
+</button>
+
+</div>
+
+<!-- NAV -->
+
+<div class="bottom-nav">
+
+<a href="home.html">🏠<span>Home</span></a>
+<a href="host.html">👑<span>Host</span></a>
+<a href="post.html">💬<span>Posts</span></a>
+<a href="profile.html" class="active">👤<span>Profile</span></a>
+
+</div>
+
+<script>
+
+/* GET USER */
+
+let user =
+localStorage.getItem("phonkUser");
+
+document.getElementById("username").innerText =
+user || "Guest";
+
+
+/* LOAD BEAST SONGS */
+
+let beasts=JSON.parse(localStorage.getItem("beastSongs")) || [];
+let box=document.getElementById("beastBox");
+
+let audio=new Audio();
+
+beasts.forEach((song,index)=>{
+box.innerHTML+=`
+<div class="msg">
+<img src="${song.image}" class="beast-img">
+<div style="flex:1">
+<b>${song.name}</b>
+</div>
+<button class="beast-play" onclick="playBeast('${song.file}')">▶</button>
+<button class="beast-unstar" onclick="removeBeast(${index})">★</button>
+</div>`;
+});
+
+function playBeast(file){
+audio.src=file;
+audio.play();
+}
+
+function removeBeast(index){
+let beasts=JSON.parse(localStorage.getItem("beastSongs")) || [];
+beasts.splice(index,1);
+localStorage.setItem("beastSongs",JSON.stringify(beasts));
+location.reload();
+}
+
+/* LOGOUT */
+
+
+function logout(){
+
+localStorage.removeItem("phonkUser");
+
+window.location.href =
+"index.html";
+
+}
+
+</script>
+<script src="cursor.js"></script>
+</body>
+
+</html>
