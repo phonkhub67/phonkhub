@@ -999,141 +999,93 @@ document
 
 },500);
 
-/* SEEK */
+/* PROGRESS BAR CONTROL */
 
-document
-.getElementById("progressBar")
-.addEventListener("input",function(){
-
-if(currentSong){
-
-currentSong.currentTime =
-(this.value/100)
-* currentSong.duration;
-
-}
-
+document.getElementById("progressBar").addEventListener("input", function(){
+  if(currentSong){
+    let newTime = (this.value / 100) * currentSong.duration;
+    currentSong.currentTime = newTime;
+  }
 });
 
-/* VOLUME */
+/* VOLUME CONTROL */
 
-document
-.getElementById("volumeBar")
-.addEventListener("input",function(){
-
-if(currentSong){
-
-currentSong.volume = this.value;
-
-}
-
+document.getElementById("volumeBar").addEventListener("input", function(){
+  if(currentSong){
+    currentSong.volume = this.value;
+  }
 });
 
-/* SEARCH */
-
-function searchSongs(){
-
-let value =
-document
-.getElementById("searchInput")
-.value
-.toLowerCase();
-
-let cards =
-document.querySelectorAll(".card");
-
-cards.forEach(card=>{
-
-let title =
-card.querySelector("h2")
-.innerText
-.toLowerCase();
-
-if(title.includes(value)){
-
-card.style.display = "block";
-
-}else{
-
-card.style.display = "none";
-
-}
-
-});
-
-}
-
+/* LOOP TOGGLE */
 
 function toggleLoop(){
-loopEnabled=!loopEnabled;
-let btn=document.getElementById("loopBtn");
-btn.classList.toggle("active",loopEnabled);
-if(currentSong){currentSong.loop=loopEnabled;}
+  loopEnabled = !loopEnabled;
+  document.getElementById("loopBtn").classList.toggle("active");
+  if(currentSong){
+    currentSong.loop = loopEnabled;
+  }
 }
+
+/* SEARCH SONGS */
+
+function searchSongs(){
+  let searchValue = document.getElementById("searchInput").value.toLowerCase();
+  let cards = document.querySelectorAll(".card");
+  
+  cards.forEach(card => {
+    let songName = card.querySelector("h2").innerText.toLowerCase();
+    if(songName.includes(searchValue)){
+      card.style.display = "";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+
+/* STAR TOGGLE */
+
+function toggleStar(event, index){
+  event.preventDefault();
+  event.stopPropagation();
+  let btn = event.target;
+  btn.classList.toggle("active");
+  
+  // Store favorite in localStorage
+  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  if(btn.classList.contains("active")){
+    if(!favorites.includes(index)){
+      favorites.push(index);
+    }
+  } else {
+    favorites = favorites.filter(fav => fav !== index);
+  }
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+}
+
+/* TOGGLE NAVBAR */
 
 function toggleNavbar(){
-let nav=document.querySelector(".bottom-nav");
-let btn=document.getElementById("navToggle");
-let player=document.getElementById("nowPlaying");
-
-navVisible=!navVisible;
-
-if(navVisible){
-nav.classList.remove("hidden");
-player.style.bottom="85px";
-btn.innerHTML="▼";
-}else{
-nav.classList.add("hidden");
-player.style.bottom="10px";
-btn.innerHTML="▲";
-}
-}else{
-nav.classList.add("hidden");
-btn.innerHTML="▲";
-}
+  let navbar = document.querySelector(".bottom-nav");
+  navbar.classList.toggle("hidden");
 }
 
+/* INITIALIZE PAGE */
 
-function getBeasts(){
-return JSON.parse(localStorage.getItem("beastSongs")||"[]");
-}
-
-function toggleStar(event,index){
-event.stopPropagation();
-let beasts=getBeasts();
-let btn=event.target;
-let song=songs[index];
-
-let exists=beasts.find(x=>x.name===song.name);
-
-if(exists){
-beasts=beasts.filter(x=>x.name!==song.name);
-btn.classList.remove("active");
-}else{
-beasts.push(song);
-btn.classList.add("active");
-}
-
-localStorage.setItem("beastSongs",JSON.stringify(beasts));
-}
-
-document.addEventListener("DOMContentLoaded",()=>{
-setTimeout(()=>{
-let beasts=getBeasts();
-document.querySelectorAll(".card").forEach(card=>{
-let name=card.querySelector("h2").innerText;
-if(beasts.some(x=>x.name===name)){
-card.querySelector(".star-btn").classList.add("active");
-}
+document.addEventListener("DOMContentLoaded", function(){
+  createSongs();
+  
+  // Restore favorites
+  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  favorites.forEach(index => {
+    let btn = document.querySelectorAll(".star-btn")[index];
+    if(btn){
+      btn.classList.add("active");
+    }
+  });
 });
-},300);
-});
-
-/* START */
-
-createSongs();
 
 </script>
-<script src="cursor.js"></script>
+
 </body>
+
 </html>
