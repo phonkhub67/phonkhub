@@ -326,13 +326,20 @@ background:#ff66ff;
 let user = localStorage.getItem("phonkUser");
 document.getElementById("username").innerText = user || "Guest User";
 
+/* GET USER-SPECIFIC FAVORITES KEY */
+function getFavoritesKey(){
+  let user = localStorage.getItem("phonkUser") || "guest";
+  return "favorites_" + user;
+}
+
 /* LOAD FAVORITE SONGS */
 
 let audio = new Audio();
 let beastBox = document.getElementById("beastBox");
 
 function loadFavorites(){
-  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  let favKey = getFavoritesKey();
+  let favorites = JSON.parse(localStorage.getItem(favKey)) || [];
   let songs = [
     { name:"NEXT-NCTS", file:"NEXT-NCTS.mp3", image:"1.jpg" },
     { name:"FRAGMENT", file:"Fragment.mp3", image:"2.jpg" },
@@ -399,9 +406,10 @@ function playBeast(file){
 }
 
 function removeFavorite(index){
-  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  let favKey = getFavoritesKey();
+  let favorites = JSON.parse(localStorage.getItem(favKey)) || [];
   favorites = favorites.filter(fav => fav !== index);
-  localStorage.setItem("favorites", JSON.stringify(favorites));
+  localStorage.setItem(favKey, JSON.stringify(favorites));
   loadFavorites();
 }
 
@@ -410,7 +418,6 @@ function removeFavorite(index){
 function logout(){
   if(confirm("Are you sure you want to logout?")){
     localStorage.removeItem("phonkUser");
-    localStorage.removeItem("favorites");
     window.location.href = "index.html";
   }
 }
