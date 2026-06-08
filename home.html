@@ -278,6 +278,30 @@ nav{
 
 }
 
+.player-controls{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+#prevBtn, #nextBtn{
+  width:48px;
+  height:48px;
+  border:none;
+  border-radius:50%;
+  background:rgba(255,255,255,0.12);
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+  transition:0.3s;
+  border:1px solid rgba(255,255,255,0.12);
+}
+
+#prevBtn:hover, #nextBtn:hover{
+  background:rgba(255,0,255,0.15);
+  transform:scale(1.05);
+}
+
 #pauseBtn{
 
   width:72px;
@@ -308,6 +332,7 @@ nav{
   font-weight:bold;
 
   line-height:28px;
+  flex:1;
 
 }
 
@@ -422,6 +447,7 @@ background:rgba(255,0,255,0.22);
 border:1px solid rgba(255,0,255,0.45);
 box-shadow:0 0 20px rgba(255,0,255,0.25);
 }
+
 #navToggle{
 position:fixed;bottom:90px;right:20px;width:52px;height:52px;border:none;
 border-radius:18px;background:rgba(255,255,255,0.08);
@@ -430,6 +456,12 @@ color:white;font-size:20px;cursor:pointer;z-index:100000;
 border:1px solid rgba(255,255,255,0.12);transition:0.35s;
 }
 #navToggle:hover{background:rgba(255,0,255,0.15);}
+#navToggle.active{
+background:rgba(255,0,255,0.25);
+border:1px solid rgba(255,0,255,0.45);
+box-shadow:0 0 20px rgba(255,0,255,0.3);
+transform:rotate(180deg);
+}
 .bottom-nav.hidden{transform:translateY(100%);}
 .bottom-nav{transition:0.45s ease;}
 #nowPlaying{transition:bottom .45s ease, transform .45s ease;}
@@ -516,9 +548,13 @@ id="songsContainer">
 
   <div class="player-top">
 
-    <button id="pauseBtn" onclick="togglePause()">▶</button>
+    <div class="player-controls">
+      <button id="prevBtn" onclick="playPrevious()">⏮</button>
+      <button id="pauseBtn" onclick="togglePause()">▶</button>
+      <button id="nextBtn" onclick="playNext()">⏭</button>
+    </div>
 
-    <h3 id="nowTitle">No Song Playing</h3>
+    <h3 id="nowTitle">No Phonk Playing</h3>
 
     <button id="loopBtn" onclick="toggleLoop()">⟲</button>
 
@@ -767,6 +803,7 @@ image:"2.jpg"
 
 let currentSong = null;
 let currentButton = null;
+let currentSongIndex = null;
 let loopEnabled=false;
 let navVisible=true;
 
@@ -810,7 +847,7 @@ PHONK ARTIST
 
 <button
 class="play-btn"
-onclick="playSong('${id}','${song.name}',this)"
+onclick="playSong('${id}','${song.name}',this,${index})"
 >
 
 <span class="play-text">
@@ -857,7 +894,7 @@ DOWNLOAD
 
 /* PLAY */
 
-function playSong(id,name,btn){
+function playSong(id,name,btn,index){
 
 let song =
 document.getElementById(id);
@@ -882,6 +919,7 @@ song.play();
 
 currentSong = song;
 currentButton = btn;
+currentSongIndex = index;
 song.loop=loopEnabled;
 
 btn.querySelector(".play-text")
@@ -906,6 +944,55 @@ document
 .getElementById("pauseBtn")
 .innerText = "▶";
 
+}
+
+}
+
+/* PLAY NEXT */
+
+function playNext(){
+
+if(currentSongIndex !== null){
+
+let nextIndex = currentSongIndex + 1;
+
+if(nextIndex >= songs.length){
+  nextIndex = 0;
+}
+
+let nextSong = songs[nextIndex];
+let nextElement = document.getElementById("song"+nextIndex);
+let nextButton = nextElement.closest(".card").querySelector(".play-btn");
+
+playSong("song"+nextIndex, nextSong.name, nextButton, nextIndex);
+
+}else{
+  playSong("song0", songs[0].name, document.querySelector(".play-btn"), 0);
+}
+
+}
+
+/* PLAY PREVIOUS */
+
+function playPrevious(){
+
+if(currentSongIndex !== null){
+
+let prevIndex = currentSongIndex - 1;
+
+if(prevIndex < 0){
+  prevIndex = songs.length - 1;
+}
+
+let prevSong = songs[prevIndex];
+let prevElement = document.getElementById("song"+prevIndex);
+let prevButton = prevElement.closest(".card").querySelector(".play-btn");
+
+playSong("song"+prevIndex, prevSong.name, prevButton, prevIndex);
+
+}else{
+  let lastIndex = songs.length - 1;
+  playSong("song"+lastIndex, songs[lastIndex].name, document.querySelectorAll(".play-btn")[lastIndex], lastIndex);
 }
 
 }
@@ -946,7 +1033,8 @@ nextCard.querySelector("h2").innerText;
 playSong(
 nextSong.id,
 nextName,
-nextButton
+nextButton,
+nextIndex
 );
 
 }
@@ -999,90 +1087,102 @@ document
 
 },500);
 
-/* PROGRESS BAR CONTROL */
+document.getElementById("progressBar").addEventListener("input",function(){
 
-document.getElementById("progressBar").addEventListener("input", function(){
-  if(currentSong){
-    let newTime = (this.value / 100) * currentSong.duration;
-    currentSong.currentTime = newTime;
-  }
+if(currentSong){
+
+currentSong.currentTime = (this.value / 100) * currentSong.duration;
+
+}
+
 });
 
-/* VOLUME CONTROL */
+document.getElementById("volumeBar").addEventListener("input",function(){
 
-document.getElementById("volumeBar").addEventListener("input", function(){
-  if(currentSong){
-    currentSong.volume = this.value;
-  }
+if(currentSong){
+
+currentSong.volume = this.value;
+
+}
+
 });
-
-/* LOOP TOGGLE */
 
 function toggleLoop(){
-  loopEnabled = !loopEnabled;
-  document.getElementById("loopBtn").classList.toggle("active");
-  if(currentSong){
-    currentSong.loop = loopEnabled;
-  }
+
+let loopBtn = document.getElementById("loopBtn");
+
+loopEnabled = !loopEnabled;
+
+if(loopEnabled){
+
+loopBtn.classList.add("active");
+
+if(currentSong){
+  currentSong.loop = true;
 }
 
-/* SEARCH SONGS */
+}else{
 
-function searchSongs(){
-  let searchValue = document.getElementById("searchInput").value.toLowerCase();
-  let cards = document.querySelectorAll(".card");
-  
-  cards.forEach(card => {
-    let songName = card.querySelector("h2").innerText.toLowerCase();
-    if(songName.includes(searchValue)){
-      card.style.display = "";
-    } else {
-      card.style.display = "none";
-    }
-  });
+loopBtn.classList.remove("active");
+
+if(currentSong){
+  currentSong.loop = false;
 }
 
-/* STAR TOGGLE */
-
-function toggleStar(event, index){
-  event.preventDefault();
-  event.stopPropagation();
-  let btn = event.target;
-  btn.classList.toggle("active");
-  
-  // Store favorite in localStorage
-  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-  if(btn.classList.contains("active")){
-    if(!favorites.includes(index)){
-      favorites.push(index);
-    }
-  } else {
-    favorites = favorites.filter(fav => fav !== index);
-  }
-  localStorage.setItem("favorites", JSON.stringify(favorites));
 }
 
-/* TOGGLE NAVBAR */
+}
 
 function toggleNavbar(){
-  let navbar = document.querySelector(".bottom-nav");
-  navbar.classList.toggle("hidden");
+
+let bottomNav = document.querySelector(".bottom-nav");
+let navToggle = document.getElementById("navToggle");
+let nowPlaying = document.getElementById("nowPlaying");
+
+navVisible = !navVisible;
+
+if(!navVisible){
+
+bottomNav.classList.add("hidden");
+nowPlaying.style.bottom = "20px";
+navToggle.classList.add("active");
+
+}else{
+
+bottomNav.classList.remove("hidden");
+nowPlaying.style.bottom = "85px";
+navToggle.classList.remove("active");
+
 }
 
-/* INITIALIZE PAGE */
+}
 
-document.addEventListener("DOMContentLoaded", function(){
-  createSongs();
+function toggleStar(event, index){
+
+let starBtn = event.target;
+
+starBtn.classList.toggle("active");
+
+}
+
+function searchSongs(){
+
+let searchInput = document.getElementById("searchInput").value.toUpperCase();
+let cards = document.querySelectorAll(".card");
+
+cards.forEach(card => {
+  let songName = card.querySelector("h2").innerText.toUpperCase();
   
-  // Restore favorites
-  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-  favorites.forEach(index => {
-    let btn = document.querySelectorAll(".star-btn")[index];
-    if(btn){
-      btn.classList.add("active");
-    }
-  });
+  if(songName.includes(searchInput)){
+    card.style.display = "";
+  }else{
+    card.style.display = "none";
+  }
 });
+
+}
+
+createSongs();
 
 </script>
 
