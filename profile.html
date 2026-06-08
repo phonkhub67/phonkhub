@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<link rel="stylesheet" href="cursor.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PROFILE</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#05010d;
+color:white;
+padding-bottom:100px;
+background-image:radial-gradient(circle at top,#290033,#05010d 60%);
+}
+
+/* HEADER */
+
+.header{
+text-align:center;
+padding:30px 20px 20px;
+}
+
+.header h1{
+color:#ff00ff;
+text-shadow:0 0 20px #ff00ff, 0 0 40px #ff00ff;
+font-size:32px;
+}
+
+/* CARD */
+
+.card{
+width:90%;
+max-width:600px;
+margin:20px auto;
+padding:25px;
+background:linear-gradient(135deg, #1a0a25, #120018);
+border-radius:20px;
+border:1px solid #ff00ff44;
+box-shadow:0 0 30px rgba(255,0,255,0.1);
+}
+
+/* TEXT */
+
+.label{
+color:#aaa;
+font-size:13px;
+text-transform:uppercase;
+letter-spacing:1px;
+margin-top:15px;
+margin-bottom:5px;
+}
+
+.value{
+font-size:22px;
+margin-bottom:20px;
+color:#ff00ff;
+font-weight:bold;
+}
+
+/* EMPTY STATE */
+
+.empty-state{
+text-align:center;
+padding:30px 20px;
+color:#666;
+font-size:14px;
+}
+
+.empty-state-icon{
+font-size:40px;
+margin-bottom:10px;
+}
+
+/* MESSAGES */
+
+.msgBox{
+margin-top:10px;
+margin-bottom:20px;
+max-height:400px;
+overflow-y:auto;
+}
+
+.msg{
+display:flex;
+align-items:center;
+gap:12px;
+background:#0f0515;
+padding:12px;
+border-radius:12px;
+margin:8px 0;
+border:1px solid #ff00ff22;
+transition:0.3s;
+}
+
+.msg:hover{
+border:1px solid #ff00ff55;
+background:#15051f;
+}
+
+.beast-img{
+width:60px;
+height:60px;
+object-fit:cover;
+border-radius:10px;
+border:2px solid #ff00ff33;
+flex-shrink:0;
+}
+
+.beast-info{
+flex:1;
+min-width:0;
+}
+
+.beast-info b{
+display:block;
+font-size:14px;
+color:white;
+margin-bottom:2px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.beast-info span{
+display:block;
+font-size:11px;
+color:#888;
+}
+
+.beast-play,
+.beast-unstar{
+padding:8px 12px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+transition:0.3s;
+flex-shrink:0;
+font-size:14px;
+}
+
+.beast-play{
+background:linear-gradient(45deg,#ff00ff,#8a00ff);
+color:white;
+box-shadow:0 0 15px rgba(255,0,255,0.4);
+}
+
+.beast-play:hover{
+transform:translateY(-2px);
+box-shadow:0 0 25px rgba(255,0,255,0.6);
+}
+
+.beast-unstar{
+background:#222;
+color:#ff9800;
+border:1px solid #ff9800;
+}
+
+.beast-unstar:hover{
+background:#ff9800;
+color:white;
+transform:translateY(-2px);
+}
+
+/* LOGOUT */
+
+.btn{
+width:100%;
+padding:16px;
+margin-top:25px;
+border:none;
+border-radius:12px;
+background:linear-gradient(45deg, #ff3333, #cc0000);
+color:white;
+font-weight:bold;
+cursor:pointer;
+font-size:16px;
+transition:0.3s;
+box-shadow:0 0 20px rgba(255,51,51,0.3);
+text-transform:uppercase;
+letter-spacing:1px;
+}
+
+.btn:hover{
+transform:translateY(-2px);
+box-shadow:0 0 30px rgba(255,51,51,0.6);
+background:linear-gradient(45deg, #ff5555, #dd1111);
+}
+
+.btn:active{
+transform:translateY(0);
+}
+
+/* NAV */
+
+.bottom-nav{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+height:80px;
+display:flex;
+justify-content:space-around;
+align-items:center;
+background:rgba(8,5,18,0.96);
+border-top:2px solid #ff00ff55;
+z-index:9999;
+box-shadow:0 -10px 25px rgba(0,0,0,0.6);
+backdrop-filter:blur(12px);
+}
+
+.bottom-nav a{
+text-decoration:none;
+color:#bbb;
+display:flex;
+flex-direction:column;
+align-items:center;
+font-size:16px;
+gap:5px;
+transition:0.3s;
+}
+
+.bottom-nav a span{
+font-size:11px;
+}
+
+.bottom-nav a:hover{
+color:#ff00ff;
+transform:translateY(-3px);
+}
+
+.bottom-nav a.active{
+color:#ff00ff;
+text-shadow:0 0 10px #ff00ff;
+}
+
+/* SCROLLBAR */
+
+.msgBox::-webkit-scrollbar{
+width:6px;
+}
+
+.msgBox::-webkit-scrollbar-track{
+background:#0a0510;
+border-radius:10px;
+}
+
+.msgBox::-webkit-scrollbar-thumb{
+background:#ff00ff;
+border-radius:10px;
+}
+
+.msgBox::-webkit-scrollbar-thumb:hover{
+background:#ff66ff;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+<h1>👤 PROFILE</h1>
+</div>
+
+<!-- PROFILE CARD -->
+
+<div class="card">
+
+<div class="label">👤 Username</div>
+<div class="value" id="username">---</div>
+
+<div class="label">⭐ Favorite Phonks</div>
+<div class="msgBox" id="beastBox">
+<div class="empty-state">
+<div class="empty-state-icon">🎵</div>
+<div>No favorite phonks yet</div>
+</div>
+</div>
+
+<button class="btn" onclick="logout()">
+  🔓 LOGOUT
+</button>
+
+</div>
+
+<!-- NAV -->
+
+<div class="bottom-nav">
+<a href="home.html">
+  <span style="font-size:24px;">🏠</span>
+  <span>HOME</span>
+</a>
+<a href="host.html">
+  <span style="font-size:24px;">👑</span>
+  <span>HOST</span>
+</a>
+<a href="post.html">
+  <span style="font-size:24px;">💬</span>
+  <span>POSTS</span>
+</a>
+<a href="profile.html" class="active">
+  <span style="font-size:24px;">👤</span>
+  <span>PROFILE</span>
+</a>
+</div>
+
+<script>
+
+/* GET USER */
+
+let user = localStorage.getItem("phonkUser");
+document.getElementById("username").innerText = user || "Guest User";
+
+/* GET USER-SPECIFIC FAVORITES KEY */
+function getFavoritesKey(){
+  let user = localStorage.getItem("phonkUser") || "guest";
+  return "favorites_" + user;
+}
+
+/* LOAD FAVORITE SONGS */
+
+let audio = new Audio();
+let beastBox = document.getElementById("beastBox");
+
+function loadFavorites(){
+  let favKey = getFavoritesKey();
+  let favorites = JSON.parse(localStorage.getItem(favKey)) || [];
+  let songs = [
+    { name:"NEXT-NCTS", file:"NEXT-NCTS.mp3", image:"1.jpg" },
+    { name:"FRAGMENT", file:"Fragment.mp3", image:"2.jpg" },
+    { name:"LUZ ROZA", file:"Luz Roza.mp3", image:"3.jpg" },
+    { name:"NO DESCENDO", file:"No Descendo.mp3", image:"4.jpg" },
+    { name:"VAI SENTAR", file:"Vai Sentar.mp3", image:"5.jpg" },
+    { name:"X-TALI", file:"X- TALI.mp3", image:"6.jpg" },
+    { name:"MATADORA", file:"MATADORA.mp3", image:"7.jpg" },
+    { name:"OLHA MENSAGEM", file:"Olha Mensagem.mp3", image:"8.jpg" },
+    { name:"REVENGE!", file:"REVENGE!.mp3", image:"9.jpg" },
+    { name:"SENTO", file:"SENTO.mp3", image:"10.jpg" },
+    { name:"Sol Vibra", file:"Sol Vibra .mp3", image:"1.jpg" },
+    { name:"Amor Na Praia", file:"Amor Na Praia.mp3", image:"2.jpg" },
+    { name:"FUNK SIGILO SLOWED", file:"FUNK SIGILO SLOWED.mp3", image:"3.jpg" },
+    { name:"FRAGMENT SLOWED", file:"Fragment slowed.mp3", image:"4.jpg" },
+    { name:"LUZ ROJA SLOWED", file:"Luz Roja Slowed.mp3", image:"5.jpg" },
+    { name:"TIKI TIKI", file:"TIKI TIKI.mp3", image:"6.jpg" },
+    { name:"ENVY SLOWED", file:"envy slowed.mp3", image:"7.jpg" },
+    { name:"MONTAGEM COMA", file:"MONTAGEM COMA.mp3", image:"3.jpg" },
+    { name:"FUNK CRIMINAL", file:"FUNK CRIMINAL.mp3", image:"4.jpg" },
+    { name:"FUNK UNIVERSO", file:"FUNK UNIVERSO.mp3", image:"5.jpg" },
+    { name:"LOUCURA LETAL", file:"LOUCURA LETAL.mp3", image:"6.jpg" },
+    { name:"Los Voltage!", file:"Los Voltage!.mp3", image:"7.jpg" },
+    { name:"Matushka Ultrafunk", file:"Matushka Ultrafunk.mp3", image:"8.jpg" },
+    { name:"NO BATIDO", file:"NO BATIDO.mp3", image:"9.jpg" },
+    { name:"ODNOGO ULTRAFUNK", file:"ODNOGO ULTRAFUNK.mp3", image:"10.jpg" },
+    { name:"Preet Re", file:"Preet Re.mp3", image:"1.jpg" },
+    { name:"VOCE NA MIRA", file:"VOCE NA MIRA - Hwungii, DJ VGK1.mp3", image:"2.jpg" }
+  ];
+
+  beastBox.innerHTML = "";
+
+  if(favorites.length === 0){
+    beastBox.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🎵</div>
+        <div>No favorite phonks yet. Star your favorites from Home!</div>
+      </div>
+    `;
+    return;
+  }
+
+  favorites.forEach((index) => {
+    if(songs[index]){
+      let song = songs[index];
+      beastBox.innerHTML += `
+        <div class="msg">
+          <img src="${song.image}" class="beast-img" alt="${song.name}">
+          <div class="beast-info">
+            <b>${song.name}</b>
+            <span>PHONK ARTIST</span>
+          </div>
+          <button class="beast-play" onclick="playBeast('${song.file}')">▶</button>
+          <button class="beast-unstar" onclick="removeFavorite(${index})">★</button>
+        </div>
+      `;
+    }
+  });
+}
+
+function playBeast(file){
+  audio.src = file;
+  audio.play();
+}
+
+function removeFavorite(index){
+  let favKey = getFavoritesKey();
+  let favorites = JSON.parse(localStorage.getItem(favKey)) || [];
+  favorites = favorites.filter(fav => fav !== index);
+  localStorage.setItem(favKey, JSON.stringify(favorites));
+  loadFavorites();
+}
+
+/* LOGOUT */
+
+function logout(){
+  if(confirm("Are you sure you want to logout?")){
+    localStorage.removeItem("phonkUser");
+    window.location.href = "index.html";
+  }
+}
+
+/* INITIALIZE */
+
+document.addEventListener("DOMContentLoaded", function(){
+  loadFavorites();
+});
+
+</script>
+<script src="cursor.js"></script>
+</body>
+
+</html>
