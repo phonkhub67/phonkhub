@@ -897,6 +897,9 @@ DOWNLOAD
 
 });
 
+// After creating songs, restore star states from localStorage
+restoreStarStates();
+
 }
 
 /* PLAY */
@@ -1164,12 +1167,40 @@ navToggle.classList.remove("active");
 
 }
 
+/* RESTORE STAR STATES */
+
+function restoreStarStates(){
+  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  
+  favorites.forEach((index) => {
+    let starBtn = document.querySelectorAll(".star-btn")[index];
+    if(starBtn){
+      starBtn.classList.add("active");
+    }
+  });
+}
+
+/* TOGGLE STAR - NOW WITH PERSISTENT STORAGE */
+
 function toggleStar(event, index){
-
-let starBtn = event.target;
-
-starBtn.classList.toggle("active");
-
+  let starBtn = event.target;
+  starBtn.classList.toggle("active");
+  
+  // Get current favorites from localStorage
+  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  
+  if(starBtn.classList.contains("active")){
+    // Add to favorites if not already there
+    if(!favorites.includes(index)){
+      favorites.push(index);
+    }
+  } else {
+    // Remove from favorites
+    favorites = favorites.filter(fav => fav !== index);
+  }
+  
+  // Save back to localStorage
+  localStorage.setItem("favorites", JSON.stringify(favorites));
 }
 
 function searchSongs(){
@@ -1189,10 +1220,14 @@ cards.forEach(card => {
 
 }
 
-createSongs();
+/* INITIALIZE */
+
+document.addEventListener("DOMContentLoaded", function(){
+  createSongs();
+});
 
 </script>
-
+<script src="cursor.js"></script>
 </body>
 
 </html>
