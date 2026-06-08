@@ -265,7 +265,14 @@ nav{
 
   box-shadow:
   0 0 30px rgba(255,0,255,0.25);
+  
+  transition:bottom .45s ease, transform .45s ease, opacity .45s ease;
 
+}
+
+#nowPlaying.hidden{
+  opacity:0;
+  pointer-events:none;
 }
 
 .player-top{
@@ -373,6 +380,8 @@ nav{
   z-index:99999;
 
   backdrop-filter:blur(12px);
+  
+  transition:0.45s ease;
 
 }
 
@@ -463,8 +472,6 @@ box-shadow:0 0 20px rgba(255,0,255,0.3);
 transform:rotate(180deg);
 }
 .bottom-nav.hidden{transform:translateY(100%);}
-.bottom-nav{transition:0.45s ease;}
-#nowPlaying{transition:bottom .45s ease, transform .45s ease;}
 
 
 .star-btn{
@@ -1144,13 +1151,13 @@ navVisible = !navVisible;
 if(!navVisible){
 
 bottomNav.classList.add("hidden");
-nowPlaying.style.bottom = "20px";
+nowPlaying.classList.add("hidden");
 navToggle.classList.add("active");
 
 }else{
 
 bottomNav.classList.remove("hidden");
-nowPlaying.style.bottom = "85px";
+nowPlaying.classList.remove("hidden");
 navToggle.classList.remove("active");
 
 }
